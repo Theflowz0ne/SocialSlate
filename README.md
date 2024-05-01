@@ -5,8 +5,8 @@ Social Slate is a social media platform that empowers users to create accounts, 
 ## Features
 
 -   **User Authentication**: Robust sign up, login, and logout functionalities powered by Breeze.
--   **Profile Management**: Users can create and update their profiles to reflect their personal or professional persona.
--   **Post Management**: Users can post updates, edit their messages, and delete posts as desired.
+-   **Profile Management**: Users can create and update their profiles.
+-   **Post Management**: Users can post, update, edit and delete posts as desired.
 
 ## Technologies
 
@@ -32,6 +32,43 @@ Social Slate is a social media platform that empowers users to create accounts, 
 
 ## Installation
 
-1. **Clone the repository**:
-   -git clone https://github.com/yourusername/socialslate.git
-   -cd socialslate
+1.  **Clone the repository**:
+
+    ```bash
+    git clone https://github.com/theflowz0ne/socialslate.git
+    cd socialslate
+    ```
+
+2.  **Install Dependencies**:
+
+        ```bash
+
+    composer install
+    yarn install
+    yarn dev
+
+````
+
+3. **Setup the environment file**:
+
+	```bash
+	cp .env.example .env
+	```
+
+4. **Generate an application key**:
+
+	```bash
+php artisan key:generate
+````
+
+5. **Run migrations**:
+
+    ```bash
+    php artisan migrate
+    ```
+
+6. **Serve the application**:
+
+    ```bash
+    php artisan serve
+    ```
