@@ -41,33 +41,32 @@ Social Slate is a social media platform that empowers users to create accounts, 
 
 2.  **Install Dependencies**:
 
-        ```bash
+    ```bash
 
     composer install
     yarn install
     yarn dev
+    ```
 
-````
+3.  **Setup the environment file**:
 
-3. **Setup the environment file**:
+    ```bash
+    cp .env.example .env
+    ```
 
-	```bash
-	cp .env.example .env
-	```
+4.  **Generate an application key**:
 
-4. **Generate an application key**:
+    ```bash
+    php artisan key:generate
+    ```
 
-	```bash
-php artisan key:generate
-````
-
-5. **Run migrations**:
+5.  **Run migrations**:
 
     ```bash
     php artisan migrate
     ```
 
-6. **Serve the application**:
+6.  **Serve the application**:
 
     ```bash
     php artisan serve
