@@ -6,7 +6,7 @@ Social Slate is a social media platform that empowers users to create accounts, 
 
 -   **User Authentication**: Robust sign up, login, and logout functionalities powered by Breeze.
 -   **Profile Management**: Users can create and update their profiles.
--   **Post Management**: Users can post, update, edit and delete posts as desired.
+-   **Post Management**: Users can create, update, edit and delete posts as desired.
 
 ## Technologies
 
