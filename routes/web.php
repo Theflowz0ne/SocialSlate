@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Post;
@@ -16,34 +17,22 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    $posts = Post::query()
-        ->select('posts.content', 'posts.created_at', 'posts.id')
-        ->addSelect(['author_name' => function ($query) {
-            $query->select('name')
-                ->from('users')
-                ->whereColumn('users.id', 'posts.user_id');
-        }])
-        ->with('user:id,name')
-        ->orderBy('posts.created_at', 'desc')
-        ->get()->map(function ($post) {
-            $post->formatted_date = $post->created_at->format('M d, Y');
-            $post->canEdit = auth()->user()->can('update', $post);
-            $post->canDelete = auth()->user()->can('delete', $post);
-            return $post;
-        });
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    return Inertia::render('Dashboard', ['posts' => $posts]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::resource('posts', PostController::class);
 
-Route::middleware('auth')->group(function () {
+    Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
+    Route::delete('/posts/{post}/like', [PostController::class, 'unlike'])->name('posts.unlike');
+
+    Route::post('/posts/{post}/reshare', [PostController::class, 'reshare'])->name('posts.reshare');
+    Route::delete('/posts/{post}/reshare', [PostController::class, 'removereshare'])->name('posts.removereshare');
+
+
+    Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::resource('posts', PostController::class);
-
-    Route::post('/posts/{post}/edit', [PostController::class, 'update'])->name('posts.update');
-    Route::post('/posts/{post}/delete', [PostController::class, 'destroy'])->name('posts.delete');
 });
 
 require __DIR__ . '/auth.php';

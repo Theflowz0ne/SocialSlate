@@ -30,7 +30,6 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'content' => 'required|string',
         ]);
@@ -49,7 +48,8 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $posts = Post::where('user_id', $id)->with('user:id,name')->get();
+        return Inertia::render('Profile/Posts', ['posts' => $posts]);
     }
 
     /**
@@ -95,5 +95,37 @@ class PostController extends Controller
         $post->delete();
 
         return redirect()->route('dashboard')->with('message', 'Post deleted successfully!');
+    }
+
+    public function like(Request $request, Post $post)
+    {
+        $post->likes()->create([
+            'user_id' => auth()->id()
+        ]);
+
+        return redirect()->back()->with('success', 'Post liked successfully!');
+    }
+
+    public function unlike(Request $request, Post $post)
+    {
+        $post->likes()->where('user_id', auth()->id())->delete();
+
+        return redirect()->back()->with('success', 'Like removed successfully!');
+    }
+
+    public function reshare(Request $request, Post $post)
+    {
+        $post->reshares()->create([
+            'user_id' => auth()->id()
+        ]);
+
+        return redirect()->back()->with('success', 'Post reshared successfully!');
+    }
+
+    public function removereshare(Request $request, Post $post)
+    {
+        $post->reshares()->where('user_id', auth()->id())->delete();
+
+        return redirect()->back()->with('success', 'Reshare removed successfully!');
     }
 }

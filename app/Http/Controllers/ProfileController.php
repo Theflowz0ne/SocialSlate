@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +15,36 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    /**
+     * Display a user's profile and their posts.
+     *
+     * @param  int  $id
+     * @return \Inertia\Response
+     */
+    public function show($id)
+    {
+        // Assuming $id is the user ID and you want to fetch the user's posts along with user details for each post
+        $user = User::with(['posts.user'])->findOrFail($id);
+
+        $posts = Post::with(['user:id,name', 'likes', 'reshares'])
+            ->where('user_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($post) use ($user) {
+                $post->formatted_date = $post->created_at->format('M d, Y');
+                $post->canEdit = auth()->user()->can('update', $post);
+                $post->canDelete = auth()->user()->can('delete', $post);
+                $post->liked_by_user = $post->likes->contains('user_id', auth()->user()->id);
+                $post->reshared_by_user = $post->reshares->contains('user_id', auth()->user()->id);
+                return $post;
+            });
+
+
+        return Inertia::render('Profile/Index', [
+            'user' => $user,
+            'posts' => $posts
+        ]);
+    }
     /**
      * Display the user's profile form.
      */
