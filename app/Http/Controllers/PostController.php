@@ -65,20 +65,20 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Post::findOrFail($id);
+        $request->validate([
+            'content' => 'required|string',
+        ]);
 
+        $post = Post::findOrFail($id);
         if ($post->user_id !== auth()->id()) {
             abort(403);
         }
 
-        $validatedData = $request->validate([
-            'content' => 'required|string|max:255',
+        $post->update([
+            'content' => $request->content
         ]);
 
-        $post->content = $validatedData['content'];
-        $post->save();
-
-        return redirect()->route('dashboard')->with('message', 'Post updated successfully!');
+        return redirect()->back()->with('message', 'Post updated successfully!');
     }
 
     /**

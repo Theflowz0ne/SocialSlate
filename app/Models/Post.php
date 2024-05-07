@@ -9,6 +9,10 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'content'
+    ];
+
     public function isLikedByUser($userId)
     {
         return $this->likes()->where('user_id', $userId)->exists();

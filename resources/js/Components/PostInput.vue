@@ -59,7 +59,14 @@ function insertTab(event) {
 }
 
 function submit() {
-    router.post("/posts", form);
+    router.post(
+        "/posts",
+
+        form,
+        {
+            preserveScroll: true,
+        }
+    );
     form.content = ""; // Clear form after submission
 }
 </script>

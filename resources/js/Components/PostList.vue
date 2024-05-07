@@ -30,7 +30,7 @@
                         >
                             <div
                                 class="border-b-[1px] w-full p-2 hover:bg-gray-300 cursor-pointer flex items-center space-x-2"
-                                @click="console.log('TODO: EDIT')"
+                                @click="enableEditing(post)"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -72,7 +72,19 @@
                     </div>
                 </div>
             </div>
-            <p class="whitespace-pre-wrap">{{ post.content }}</p>
+            <span
+                v-if="editingPost !== post.id"
+                class="whitespace-pre-wrap border-none w-full p-0"
+                v-text="post.content"
+                disabled
+            ></span>
+            <div v-if="editingPost === post.id">
+                <textarea
+                    ref="editInput"
+                    class="rounded-lg border-[1px] p-2 whitespace-pre-wrap resize-none w-full overflow-y-hidden"
+                    v-model="editableContent"
+                />
+            </div>
 
             <div class="flex items-center justify-between">
                 <div class="flex space-x-2">
@@ -143,6 +155,13 @@
                     </div>
                 </div>
                 <div class="flex space-x-2">
+                    <button
+                        v-if="editingPost === post.id"
+                        class="bg-blue-200 px-3 rounded"
+                        @click="saveChanges(post)"
+                    >
+                        Save
+                    </button>
                     <div
                         class="flex space-x-1 items-center"
                         v-if="post.likes.length > 0"
@@ -194,7 +213,7 @@
 <script setup>
 // Add this inside your <script setup> block
 import { Link } from "@inertiajs/vue3";
-import { onMounted, onUnmounted, ref, defineProps } from "vue";
+import { ref, defineProps } from "vue";
 import { router } from "@inertiajs/core";
 
 defineProps({
@@ -202,6 +221,27 @@ defineProps({
 });
 
 const activePost = ref(null);
+const editingPost = ref(null);
+const editableContent = ref("");
+const editInput = ref("");
+
+function enableEditing(post) {
+    editingPost.value = post.id;
+    editableContent.value = post.content;
+    activePost.value = null;
+}
+
+function saveChanges(post) {
+    router.put(
+        route("post.update", post.id),
+        { content: editableContent.value },
+        {
+            onSuccess: () => {
+                editingPost.value = null;
+            },
+        }
+    );
+}
 
 function toggleDropdown(id) {
     activePost.value = activePost.value === id ? null : id;
@@ -209,7 +249,9 @@ function toggleDropdown(id) {
 
 function deletePost(id) {
     if (confirm("Are you sure you want to delete this post?")) {
-        router.delete(`/posts/${id}`);
+        router.delete(`/posts/${id}`, {
+            preserveScroll: true,
+        });
     }
 }
 

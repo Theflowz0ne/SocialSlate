@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/posts/{post}/reshare', [PostController::class, 'reshare'])->name('posts.reshare');
     Route::delete('/posts/{post}/reshare', [PostController::class, 'removereshare'])->name('posts.removereshare');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('post.update');
 
 
     Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.show');
