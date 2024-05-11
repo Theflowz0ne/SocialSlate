@@ -128,4 +128,12 @@ class PostController extends Controller
 
         return redirect()->back()->with('success', 'Reshare removed successfully!');
     }
+
+    public function hidePost(Request $request, $postId)
+    {
+        $user = auth()->user();
+        $user->hiddenPosts()->attach($postId);
+
+        return redirect()->back()->with('message', 'Post hidden successfully');
+    }
 }

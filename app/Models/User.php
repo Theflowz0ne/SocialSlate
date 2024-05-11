@@ -17,7 +17,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
     ];
@@ -54,6 +55,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    public function hiddenPosts()
+    {
+        return $this->belongsToMany(Post::class, 'hidden_posts');
+    }
+
 
     public function reshares()
     {

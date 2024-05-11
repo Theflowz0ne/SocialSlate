@@ -5,11 +5,30 @@
             :key="post.id"
             class="p-4 mb-4 shadow rounded bg-white"
         >
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center mb-5">
                 <div>
-                    <Link :href="route('profile.show', { id: post.user.id })">
-                        <p class="text-xs font-bold">{{ post.user.name }}</p>
-                        <small>Posted on: {{ post.formatted_date }}</small>
+                    <Link
+                        class="flex space-x-2 items-center"
+                        :href="route('profile.show', { id: post.user.id })"
+                    >
+                        <img
+                            class="w-12 rounded-full"
+                            :src="
+                                'https://ui-avatars.com/api/?name=' +
+                                post.user.first_name +
+                                '+' +
+                                post.user.last_name
+                            "
+                        />
+                        <div class="flex flex-col flex-starts">
+                            <p class="text-base font-bold">
+                                {{ post.user.first_name }}
+                                {{ post.user.last_name }}
+                            </p>
+                            <span class="font-light text-sm"
+                                >Posted on: {{ post.formatted_date }}</span
+                            >
+                        </div>
                     </Link>
                 </div>
                 <div class="relative">
@@ -22,11 +41,14 @@
                     </button>
                     <div
                         v-if="activePost === post.id"
-                        class="absolute top-10 right-0 border-[1px] bg-white p-4 rounded-md min-w-64"
+                        class="absolute top-10 right-0 border-[1px] bg-white p-2 rounded-md min-w-64"
                     >
                         <div
                             class="flex flex-col items-start"
-                            v-if="$page.props.auth.user.name === post.user.name"
+                            v-if="
+                                $page.props.auth.user.first_name ===
+                                post.user.first_name
+                            "
                         >
                             <div
                                 class="border-b-[1px] w-full p-2 hover:bg-gray-300 cursor-pointer flex items-center space-x-2"
@@ -69,6 +91,25 @@
                                 <span> Delete </span>
                             </div>
                         </div>
+                        <div
+                            v-if="
+                                $page.props.auth.user.first_name !==
+                                post.user.first_name
+                            "
+                        >
+                            <div
+                                class="w-full p-2 rounded hover:bg-gray-300 cursor-pointer flex items-center space-x-2"
+                                @click="hidePost(post.id)"
+                            >
+                                <img
+                                    class="w-5"
+                                    src="/images/hide.png"
+                                    alt=""
+                                    srcset=""
+                                />
+                                <span> Hide post</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -86,7 +127,7 @@
                 />
             </div>
 
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between mt-5">
                 <div class="flex space-x-2">
                     <div
                         @click="toggleLike(post)"
@@ -236,6 +277,7 @@ function saveChanges(post) {
         route("post.update", post.id),
         { content: editableContent.value },
         {
+            preserveScroll: true,
             onSuccess: () => {
                 editingPost.value = null;
             },
@@ -249,9 +291,7 @@ function toggleDropdown(id) {
 
 function deletePost(id) {
     if (confirm("Are you sure you want to delete this post?")) {
-        router.delete(`/posts/${id}`, {
-            preserveScroll: true,
-        });
+        router.delete(`/posts/${id}`);
     }
 }
 
@@ -285,5 +325,9 @@ const toggleReshare = async (post) => {
     } catch (error) {
         console.error("Failed to toggle reshare:", error);
     }
+};
+
+const hidePost = (postId) => {
+    router.post(`/posts/${postId}/hide`);
 };
 </script>

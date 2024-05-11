@@ -21,13 +21,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('posts', PostController::class);
-
     Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
     Route::delete('/posts/{post}/like', [PostController::class, 'unlike'])->name('posts.unlike');
-
     Route::post('/posts/{post}/reshare', [PostController::class, 'reshare'])->name('posts.reshare');
     Route::delete('/posts/{post}/reshare', [PostController::class, 'removereshare'])->name('posts.removereshare');
     Route::put('/posts/{id}', [PostController::class, 'update'])->name('post.update');
+    Route::post('/posts/{post}/hide', [PostController::class, 'hidePost'])->name('posts.hide');
 
 
     Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.show');

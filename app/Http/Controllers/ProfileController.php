@@ -23,10 +23,13 @@ class ProfileController extends Controller
      */
     public function show($id)
     {
-        // Assuming $id is the user ID and you want to fetch the user's posts along with user details for each post
         $user = User::with(['posts.user'])->findOrFail($id);
+        $userId = auth()->id();
 
-        $posts = Post::with(['user:id,name', 'likes', 'reshares'])
+        $posts = Post::with(['user:id,first_name,last_name', 'likes', 'reshares'])
+            ->whereDoesntHave('hiddenByUsers', function ($query) use ($userId) {
+                $query->where('users.id', $userId);
+            })
             ->where('user_id', $id)
             ->orderBy('created_at', 'desc')
             ->get()

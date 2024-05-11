@@ -28,6 +28,12 @@ class Post extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function hiddenByUsers()
+    {
+        return $this->belongsToMany(User::class, 'hidden_posts');
+    }
+
+
     public function likes()
     {
         return $this->hasMany(Like::class);

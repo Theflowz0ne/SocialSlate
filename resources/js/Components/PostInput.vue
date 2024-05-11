@@ -1,14 +1,14 @@
 <template>
-    <div class="mb-4">
+    <div class="mb-4 flex">
         <textarea
             v-model="form.content"
             placeholder="What's on your mind?"
-            class="w-full rounded min-h-[100px]"
+            class="w-full rounded-l-lg min-h-[100px] shadow border-white box-border focus:border-none focus:border-inline"
             @keydown.tab.prevent="insertTab"
         ></textarea>
         <button
             @click="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg"
         >
             Post
         </button>
@@ -21,8 +21,8 @@
 
 <style scoped>
 .post-content pre {
-    white-space: pre-wrap; /* preserves spaces, tabs, and line breaks */
-    word-wrap: break-word; /* ensures the text breaks to prevent overflow */
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 </style>
 
@@ -44,17 +44,13 @@ function insertTab(event) {
     const textarea = event.target;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-
-    // Set textarea value to: text before caret + tab + text after caret
     form.content =
         textarea.value.substring(0, start) +
         "\t" +
         textarea.value.substring(end);
 
-    // Put caret at right position again
     textarea.selectionStart = textarea.selectionEnd = start + 1;
 
-    // Prevent the default tab behavior
     event.preventDefault();
 }
 
@@ -67,6 +63,6 @@ function submit() {
             preserveScroll: true,
         }
     );
-    form.content = ""; // Clear form after submission
+    form.content = "";
 }
 </script>

@@ -10,10 +10,12 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-
         $userId = auth()->id();
 
-        $posts = Post::with(['user:id,name', 'likes', 'reshares'])
+        $posts = Post::with(['user:id,first_name,last_name', 'likes', 'reshares'])
+            ->whereDoesntHave('hiddenByUsers', function ($query) use ($userId) {
+                $query->where('users.id', $userId);
+            })
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($post) use ($userId) {
