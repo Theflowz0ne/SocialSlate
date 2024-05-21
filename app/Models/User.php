@@ -61,9 +61,18 @@ class User extends Authenticatable
         return $this->belongsToMany(Post::class, 'hidden_posts');
     }
 
-
     public function reshares()
     {
         return $this->hasMany(Reshare::class);
+    }
+
+    public function blockedUsers()
+    {
+        return $this->belongsToMany(User::class, 'blocked_users', 'user_id', 'blocked_user_id');
+    }
+
+    public function blockingUsers()
+    {
+        return $this->belongsToMany(User::class, 'blocked_users', 'blocked_user_id', 'user_id');
     }
 }

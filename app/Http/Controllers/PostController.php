@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -48,7 +49,24 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        $posts = Post::where('user_id', $id)->with('user:id,name')->get();
+        $userId = auth()->id();
+
+        // Check if the user is blocked or has blocked the profile being viewed
+        $blocked = User::where('id', $id)
+            ->where(function ($query) use ($userId) {
+                $query->whereHas('blockers', function ($q) use ($userId) {
+                    $q->where('users.id', $userId);
+                })->orWhereHas('blockedUsers', function ($q) use ($userId) {
+                    $q->where('users.id', $userId);
+                });
+            })
+            ->exists();
+
+        if ($blocked) {
+            abort(403, 'You are not allowed to view this user\'s profile.');
+        }
+
+        $posts = Post::where('user_id', $id)->with('user:id,first_name,last_name')->get();
         return Inertia::render('Profile/Posts', ['posts' => $posts]);
     }
 

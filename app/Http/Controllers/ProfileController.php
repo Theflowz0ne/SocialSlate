@@ -23,8 +23,24 @@ class ProfileController extends Controller
      */
     public function show($id)
     {
-        $user = User::with(['posts.user'])->findOrFail($id);
         $userId = auth()->id();
+
+        // Check if the authenticated user has blocked the profile user or vice versa
+        $isBlocked = User::where('id', $userId)
+            ->whereHas('blockedUsers', function ($query) use ($id) {
+                $query->where('blocked_user_id', $id);
+            })
+            ->exists() || User::where('id', $id)
+            ->whereHas('blockedUsers', function ($query) use ($userId) {
+                $query->where('blocked_user_id', $userId);
+            })
+            ->exists();
+
+        if ($isBlocked) {
+            return redirect()->route('dashboard')->with('message', 'You are not allowed to view this profile.');
+        }
+
+        $user = User::with(['posts.user'])->findOrFail($id);
 
         $posts = Post::with(['user:id,first_name,last_name', 'likes', 'reshares'])
             ->whereDoesntHave('hiddenByUsers', function ($query) use ($userId) {
@@ -33,15 +49,14 @@ class ProfileController extends Controller
             ->where('user_id', $id)
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function ($post) use ($user) {
+            ->map(function ($post) use ($userId) {
                 $post->formatted_date = $post->created_at->format('M d, Y');
                 $post->canEdit = auth()->user()->can('update', $post);
                 $post->canDelete = auth()->user()->can('delete', $post);
-                $post->liked_by_user = $post->likes->contains('user_id', auth()->user()->id);
-                $post->reshared_by_user = $post->reshares->contains('user_id', auth()->user()->id);
+                $post->liked_by_user = $post->likes->contains('user_id', $userId);
+                $post->reshared_by_user = $post->reshares->contains('user_id', $userId);
                 return $post;
             });
-
 
         return Inertia::render('Profile/Index', [
             'user' => $user,
@@ -94,5 +109,21 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function blockUser(Request $request, $userId)
+    {
+        $user = auth()->user();
+        $user->blockedUsers()->attach($userId);
+
+        return redirect()->back()->with('message', 'User blocked successfully.');
+    }
+
+    public function unblockUser(Request $request, $userId)
+    {
+        $user = auth()->user();
+        $user->blockedUsers()->detach($userId);
+
+        return redirect()->back()->with('message', 'User unblocked successfully.');
     }
 }

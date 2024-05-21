@@ -45,10 +45,7 @@
                     >
                         <div
                             class="flex flex-col items-start"
-                            v-if="
-                                $page.props.auth.user.first_name ===
-                                post.user.first_name
-                            "
+                            v-if="$page.props.auth.user.id === post.user.id"
                         >
                             <div
                                 class="border-b-[1px] w-full p-2 hover:bg-gray-300 cursor-pointer flex items-center space-x-2"
@@ -91,12 +88,7 @@
                                 <span> Delete </span>
                             </div>
                         </div>
-                        <div
-                            v-if="
-                                $page.props.auth.user.first_name !==
-                                post.user.first_name
-                            "
-                        >
+                        <div v-if="$page.props.auth.user.id !== post.user.id">
                             <div
                                 class="w-full p-2 rounded hover:bg-gray-300 cursor-pointer flex items-center space-x-2"
                                 @click="hidePost(post.id)"
@@ -108,6 +100,18 @@
                                     srcset=""
                                 />
                                 <span> Hide post</span>
+                            </div>
+                            <div
+                                class="w-full p-2 rounded hover:bg-gray-300 cursor-pointer flex items-center space-x-2"
+                                @click="blockUser(post.user.id)"
+                            >
+                                <img
+                                    class="w-5"
+                                    src="/images/block.png"
+                                    alt="Block user"
+                                    srcset=""
+                                />
+                                <span> Block user</span>
                             </div>
                         </div>
                     </div>
@@ -329,5 +333,18 @@ const toggleReshare = async (post) => {
 
 const hidePost = (postId) => {
     router.post(`/posts/${postId}/hide`);
+};
+
+const blockUser = (userId) => {
+    if (confirm("Are you sure you want to block this user?")) {
+        router
+            .post(`/user/${userId}/block`)
+            .then(() => {
+                alert("User blocked successfully");
+            })
+            .catch((error) => {
+                console.error("Failed to block user:", error);
+            });
+    }
 };
 </script>
