@@ -26,7 +26,7 @@ Welcome to **Social Slate**, a dynamic social media platform where you can conne
 
 Check out the quick demo of Social Slate in action:
 
-[![IMAGE ALT TEXT HERE]([https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)]([https://youtu.be/GTKO1JElziw?si=PLawIYnsM9WWj1Mz]](https://youtu.be/GTKO1JElziw?si=PLawIYnsM9WWj1Mz))
+[![Demo Video](https://img.youtube.com/vi/GTKO1JElziw/0.jpg)](https://youtu.be/GTKO1JElziw?si=PLawIYnsM9WWj1Mz)
 
 ## Prerequisites
 
