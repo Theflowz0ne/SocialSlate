@@ -17,7 +17,7 @@ Welcome to **Social Slate**, a dynamic social media platform where you can conne
 ## Features
 
 - **User Profiles:** Create and customize your profile.
-- **Posts:** Create, edit, and delete posts.
+- **Posts:** Create, edit, hide and delete posts.
 - **Interactions:** Like and share posts.
 - **User Management:** Block other users.
 - **Real-time Updates:** Experience real-time updates with Inertia.js and Vue.js.
