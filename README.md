@@ -45,7 +45,7 @@ Follow these steps to get a local copy up and running.
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/Theflowz0ne/social-slate.git
+    git clone https://github.com/Theflowz0ne/SocialSlate.git
     cd social-slate
     ```
 
