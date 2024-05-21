@@ -120,7 +120,7 @@ Your application should now be running at [http://localhost:8000](http://localho
 
 ### User Management
 
-- **Block User:** Go to the profile of the user you want to block and click on "Block User".
+- **Block User:** Post of the user, options and then click on "Block User".
 
 
 ## License
